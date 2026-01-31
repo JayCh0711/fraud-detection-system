@@ -1,0 +1,83 @@
+# Data Schema Configuration for Fraud Detection
+
+schema_version: "1.0"
+
+columns:
+  step:
+    dtype: "int64"
+    nullable: false
+    description: "Time step of transaction"
+    
+  type:
+    dtype: "object"
+    nullable: false
+    allowed_values: ["PAYMENT", "TRANSFER", "CASH_OUT", "DEBIT", "CASH_IN"]
+    description: "Type of transaction"
+    
+  amount:
+    dtype: "float64"
+    nullable: false
+    min_value: 0
+    description: "Transaction amount"
+    
+  name_orig:
+    dtype: "object"
+    nullable: false
+    description: "Origin account ID"
+    
+  old_balance_org:
+    dtype: "float64"
+    nullable: false
+    min_value: 0
+    description: "Origin account balance before transaction"
+    
+  new_balance_org:
+    dtype: "float64"
+    nullable: false
+    min_value: 0
+    description: "Origin account balance after transaction"
+    
+  name_dest:
+    dtype: "object"
+    nullable: false
+    description: "Destination account ID"
+    
+  old_balance_dest:
+    dtype: "float64"
+    nullable: false
+    min_value: 0
+    description: "Destination account balance before transaction"
+    
+  new_balance_dest:
+    dtype: "float64"
+    nullable: false
+    min_value: 0
+    description: "Destination account balance after transaction"
+    
+  is_fraud:
+    dtype: "int64"
+    nullable: false
+    allowed_values: [0, 1]
+    description: "Target variable - 1 if fraud, 0 otherwise"
+    
+  is_flagged_fraud:
+    dtype: "int64"
+    nullable: true
+    allowed_values: [0, 1]
+    description: "System flagged fraud"
+
+target_column: "is_fraud"
+
+drop_columns:
+  - "name_orig"
+  - "name_dest"
+  - "is_flagged_fraud"
+
+required_columns:
+  - "type"
+  - "amount"
+  - "old_balance_org"
+  - "new_balance_org"
+  - "old_balance_dest"
+  - "new_balance_dest"
+  - "is_fraud"

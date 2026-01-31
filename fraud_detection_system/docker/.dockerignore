@@ -1,0 +1,44 @@
+# Version Control
+.git
+.gitignore
+
+# Python Cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+venv
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Jupyter
+.ipynb_checkpoints
+
+# IDE
+.vscode
+.idea
+
+# Artifacts (Except production models if needed, but usually we mount volumes)
+artifacts/data_ingestion
+artifacts/data_validation
+artifacts/data_transformation
+artifacts/model_trainer
+artifacts/model_evaluation
+# Keep production_model folder structure but ignore contents if strictly separating
+# artifacts/production_model/*
+
+# Logs
+logs/
+*.log
+
+# Docker
+docker/
+Dockerfile*
+docker-compose.yaml
+
+# System
+.DS_Store
+Thumbs.db

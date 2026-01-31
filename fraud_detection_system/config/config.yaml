@@ -1,0 +1,65 @@
+# Main Project Configuration
+
+data_ingestion:
+  source_type: "csv"  # csv, database, api, kafka
+  source_path: "data/raw/transactions.csv"
+  database:
+    host: ${DB_HOST}
+    port: 5432
+    database: "fraud_db"
+    table_name: "transactions"
+  train_test_split_ratio: 0.2
+  random_state: 42
+
+data_validation:
+  schema_file_path: "config/schema.yaml"
+  missing_threshold: 0.3  # Drop column if >30% missing
+  duplicate_check: true
+  report_path: "artifacts/data_validation/validation_report.json"
+
+data_transformation:
+  numerical_features:
+    - "amount"
+    - "old_balance_org"
+    - "new_balance_org"
+    - "old_balance_dest"
+    - "new_balance_dest"
+  categorical_features:
+    - "type"
+  target_column: "is_fraud"
+  scaling_method: "standard"  # standard, minmax, robust
+  handle_imbalance: "smote"   # smote, adasyn, undersampling, none
+
+feature_engineering:
+  create_features: true
+  transaction_velocity: true
+  amount_frequency: true
+  time_based_features: true
+
+model_trainer:
+  model_config_path: "config/model_config.yaml"
+  artifacts_path: "artifacts/model_trainer"
+  
+model_evaluation:
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+    - "roc_auc"
+    - "pr_auc"
+  threshold: 0.5
+  min_recall: 0.85  # Business requirement: catch 85% frauds
+  
+model_pusher:
+  model_registry_path: "artifacts/model_registry"
+  production_model_path: "artifacts/production_model"
+
+prediction_pipeline:
+  model_path: "artifacts/production_model/model.pkl"
+  preprocessor_path: "artifacts/production_model/preprocessor.pkl"
+
+monitoring:
+  enable_drift_detection: true
+  drift_threshold: 0.1
+  performance_threshold: 0.80

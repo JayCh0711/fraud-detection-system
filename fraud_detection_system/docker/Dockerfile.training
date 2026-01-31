@@ -1,0 +1,41 @@
+# Base Image
+FROM python:3.9-slim-buster
+
+# Set Metadata
+LABEL maintainer="BFSI Data Science Team"
+LABEL description="Fraud Detection Training Pipeline"
+
+# Set Environment Variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PYTHONPATH=/app
+
+# Set Work Directory
+WORKDIR /app
+
+# Install System Dependencies
+# gcc and python3-dev needed for some python packages like xgboost/lightgbm
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    python3-dev \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy Requirements
+COPY requirements.txt .
+
+# Install Python Dependencies
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# Copy Project Code
+COPY src/ src/
+COPY config/ config/
+COPY main.py .
+
+# Create Directories
+RUN mkdir -p artifacts logs
+
+# Entrypoint
+CMD ["python", "main.py"]

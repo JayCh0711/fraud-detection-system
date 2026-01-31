@@ -1,0 +1,37 @@
+# Base Image
+FROM python:3.9-slim-buster
+
+# Set Metadata
+LABEL maintainer="BFSI Data Science Team"
+LABEL description="Fraud Detection Stream Processor"
+
+# Set Environment Variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app
+
+# Set Work Directory
+WORKDIR /app
+
+# Install System Dependencies (librdkafka for confluent-kafka)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy Requirements
+COPY requirements.txt .
+
+# Install Python Dependencies
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# Copy Project Code
+COPY src/ src/
+COPY config/ config/
+COPY stream_app.py .
+
+# Create Directories
+RUN mkdir -p artifacts/production_model logs
+
+# Entrypoint
+CMD ["python", "stream_app.py", "--mode", "batch"]
